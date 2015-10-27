@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        ">
+
+    
+    <context:component-scan base-package="belajar"/>
+    <context:property-placeholder location="classpath:koneksi.properties"/>
+
+    <bean id="kd" class="belajar.KoneksiDatabase">
+        <property name="host" value="${host}"></property>
+        <property name="namaDatabase" value="${nama}"></property>
+        <property name="username" value="${username}"></property>
+        <property name="password" value="${password}"></property>
+    </bean>
+
+
+    <!-- advice transaction database -->
+    <bean id="trxInterceptor" class="belajar.aop.TransactionInterceptor">
+    </bean>
+
+
+    <!-- proxy object -->
+
+<bean id="customerDao"
+    class="org.springframework.aop.framework.ProxyFactoryBean">
+    <property name="target" ref="cd"/>
+    <property name="interceptorNames">
+        <list>
+            <value>trxInterceptor</value>
+        </list>
+    </property>
+</bean>
+
+</beans>
